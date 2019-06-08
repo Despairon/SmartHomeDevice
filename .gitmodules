@@ -1,0 +1,4 @@
+[submodule "SmartHomeDevice/Common_Library"]
+	path = SmartHomeDevice/Common_Library
+	url = https://github.com/Despairon/Common_library.git
+	branch = CommonsForSmartHomeDevice

@@ -1,2 +1,5 @@
-﻿  Main.cpp
-  SmartHomeDevice.vcxproj -> C:\Users\CBETl\source\repos\SmartHomeDevice\x64\Debug\SmartHomeDevice.exe
+﻿  Event.cpp
+  EventSystem.cpp
+  HttpMessage.cpp
+  Создание кода...
+  SmartHomeDevice.vcxproj -> E:\Programs\SmartHomeDevice\x64\Debug\SmartHomeDevice.exe

@@ -4,17 +4,17 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SmartHomeDevice.cpp" />
     <ClCompile Include="SmartHomeDeviceFsm.cpp" />
-    <ClCompile Include="HttpMessage.cpp" />
-    <ClCompile Include="EventSystem.cpp" />
-    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="Common_Library\EventSystem\Event.cpp" />
+    <ClCompile Include="Common_Library\EventSystem\EventSystem.cpp" />
+    <ClCompile Include="Common_Library\HttpMessage\HttpMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SmartHomeDevice.h" />
     <ClInclude Include="SmartHomeDeviceFsm.h" />
-    <ClInclude Include="HttpMessage.h" />
-    <ClInclude Include="StateMachine.hpp" />
-    <ClInclude Include="EventSubscriber.h" />
-    <ClInclude Include="EventSystem.h" />
-    <ClInclude Include="Event.h" />
+    <ClInclude Include="Common_Library\EventSystem\Event.h" />
+    <ClInclude Include="Common_Library\EventSystem\EventSubscriber.h" />
+    <ClInclude Include="Common_Library\EventSystem\EventSystem.h" />
+    <ClInclude Include="Common_Library\HttpMessage\HttpMessage.h" />
+    <ClInclude Include="Common_Library\StateMachine\StateMachine.hpp" />
   </ItemGroup>
 </Project>

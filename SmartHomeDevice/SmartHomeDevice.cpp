@@ -1,5 +1,5 @@
 #include "SmartHomeDevice.h"
-#include <iostream>
+
 namespace SmartHomeDevice_n
 {
     SmartHomeDevice::SmartHomeDevice()

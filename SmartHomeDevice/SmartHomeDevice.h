@@ -1,7 +1,5 @@
 #pragma once
 
-#include <queue>
-
 #include "HttpMessage.h"
 #include "SmartHomeDeviceFsm.h"
 #include "EventSystem.h"

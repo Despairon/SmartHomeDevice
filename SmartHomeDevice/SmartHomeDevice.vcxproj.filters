@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="SmartHomeDevice.cpp" />
+    <ClCompile Include="SmartHomeDeviceFsm.cpp" />
+    <ClCompile Include="HttpMessage.cpp" />
+    <ClCompile Include="EventSystem.cpp" />
+    <ClCompile Include="Event.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SmartHomeDevice.h" />
+    <ClInclude Include="SmartHomeDeviceFsm.h" />
+    <ClInclude Include="HttpMessage.h" />
+    <ClInclude Include="StateMachine.hpp" />
+    <ClInclude Include="EventSubscriber.h" />
+    <ClInclude Include="EventSystem.h" />
+    <ClInclude Include="Event.h" />
+  </ItemGroup>
+</Project>

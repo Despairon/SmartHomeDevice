@@ -7,6 +7,8 @@
     <ClCompile Include="Common_Library\EventSystem\Event.cpp" />
     <ClCompile Include="Common_Library\EventSystem\EventSystem.cpp" />
     <ClCompile Include="Common_Library\HttpMessage\HttpMessage.cpp" />
+    <ClCompile Include="Common_Library\TaskManager\Task.cpp" />
+    <ClCompile Include="Common_Library\TaskManager\TaskManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SmartHomeDevice.h" />
@@ -16,5 +18,7 @@
     <ClInclude Include="Common_Library\EventSystem\EventSystem.h" />
     <ClInclude Include="Common_Library\HttpMessage\HttpMessage.h" />
     <ClInclude Include="Common_Library\StateMachine\StateMachine.hpp" />
+    <ClInclude Include="Common_Library\TaskManager\Task.h" />
+    <ClInclude Include="Common_Library\TaskManager\TaskManager.h" />
   </ItemGroup>
 </Project>

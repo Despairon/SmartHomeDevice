@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\XmlReader;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\StateMachine;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\HttpMessage;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\EventSystem;$(IncludePath)</IncludePath>
+    <IncludePath>E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\TaskManager;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\XmlReader;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\StateMachine;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\HttpMessage;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\EventSystem;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -121,6 +121,8 @@
     <ClCompile Include="Common_Library\EventSystem\Event.cpp" />
     <ClCompile Include="Common_Library\EventSystem\EventSystem.cpp" />
     <ClCompile Include="Common_Library\HttpMessage\HttpMessage.cpp" />
+    <ClCompile Include="Common_Library\TaskManager\Task.cpp" />
+    <ClCompile Include="Common_Library\TaskManager\TaskManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SmartHomeDevice.cpp" />
     <ClCompile Include="SmartHomeDeviceFsm.cpp" />
@@ -131,6 +133,8 @@
     <ClInclude Include="Common_Library\EventSystem\EventSystem.h" />
     <ClInclude Include="Common_Library\HttpMessage\HttpMessage.h" />
     <ClInclude Include="Common_Library\StateMachine\StateMachine.hpp" />
+    <ClInclude Include="Common_Library\TaskManager\Task.h" />
+    <ClInclude Include="Common_Library\TaskManager\TaskManager.h" />
     <ClInclude Include="SmartHomeDevice.h" />
     <ClInclude Include="SmartHomeDeviceFsm.h" />
   </ItemGroup>

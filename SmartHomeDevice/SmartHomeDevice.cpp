@@ -3,10 +3,34 @@
 namespace SmartHomeDevice_n
 {
     SmartHomeDevice::SmartHomeDevice()
-    : stateMachine((State)0)
+    : stateMachine(State::INITIAL)
     {
-        EventSystem_n::EventSystem::getInstance().subscribe(0, this);
-        EventSystem_n::EventSystem::getInstance().subscribe(1, this);
+        initEventSystem();
+
+        initStateMachine();
+
+        initTaskManager();
+    }
+
+    void SmartHomeDevice::initEventSystem()
+    {
+        // TODO: not implemented
+    }
+
+    void SmartHomeDevice::initStateMachine()
+    {
+        // TODO: not implemented
+    }
+
+    void SmartHomeDevice::initTaskManager()
+    {
+        taskManager.scheduleTask(this);
+        taskManager.scheduleTask(&eventSystem, Priority::HIGH);
+    }
+
+    void SmartHomeDevice::init()
+    {
+        // TODO: not implemented
     }
 
     void SmartHomeDevice::go()
@@ -14,7 +38,12 @@ namespace SmartHomeDevice_n
         // TODO: not implemented
     }
 
-    void SmartHomeDevice::onEvent(const EventSystem_n::Event &event)
+    void SmartHomeDevice::terminate()
+    {
+        // TODO: not implemented
+    }
+
+    void SmartHomeDevice::onEvent(EventSystem *sender, const Event &event)
     {
         // TODO: not implemented
     }

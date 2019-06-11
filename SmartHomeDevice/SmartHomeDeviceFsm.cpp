@@ -12,11 +12,20 @@ namespace SmartHomeDevice_n
         }
     }
 
-    std::string SmartHomeDeviceFsm::eventToString(const Event &event) const
+    std::string SmartHomeDeviceFsm::eventToString(const EventId &event) const
     {
         switch (event)
         {
             default: return "UNKNOWN_EVENT";
         }
+    }
+
+    void SmartHomeDeviceFsm::onEvent(EventSystem* sender, const Event &event)
+    {
+        EventData eventData;
+
+        event.getData(&eventData.data, sizeof(eventData.data));
+
+        execute(event.getId(), eventData, &std::cout);
     }
 }

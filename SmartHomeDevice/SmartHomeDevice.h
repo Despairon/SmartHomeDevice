@@ -3,20 +3,29 @@
 #include "HttpMessage.h"
 #include "SmartHomeDeviceFsm.h"
 #include "EventSystem.h"
+#include "TaskManager.h"
 
 namespace SmartHomeDevice_n
 {
-    class SmartHomeDevice : EventSystem_n::EventSubscriber 
+    using namespace TaskManager_n;
+
+    class SmartHomeDevice : public EventSubscriber, public Task
     {
     private:
+        EventSystem        eventSystem;
+        TaskManager        taskManager;
         SmartHomeDeviceFsm stateMachine;
 
-    protected:
-
+        void initEventSystem();
+        void initStateMachine();
+        void initTaskManager();
     public:
         SmartHomeDevice();
 
-        void go();
-        void onEvent(const EventSystem_n::Event&) override;
+        void init() override;
+        void go() override;
+        void terminate() override;
+
+        void onEvent(EventSystem*, const Event&) override;
     };
 }

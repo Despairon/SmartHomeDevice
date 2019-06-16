@@ -12,9 +12,33 @@ namespace SmartHomeDevice_n
 
     using byte = unsigned char;
 
-    enum State : byte
+    namespace State
     {
-        INITIAL
+        enum Values : byte
+        {
+            INITIAL,
+            NETWORK_SCANNING,
+            CONNECTING_TO_WIFI,
+            CONNECTING_TO_SERVER,
+            CONNECTED
+        };
+    }
+
+    namespace Events
+    {
+        enum Values : byte
+        {
+            START,
+            NETWORK_SCAN_RESULTS_READY,
+            NETWORK_SCAN_TIMEOUT,
+            WIFI_CONNECTED,
+            WIFI_CONNECTION_FAILED,
+            WIFI_CONNECTION_TIMEOUT,
+            SERVER_CONNECTED,
+            SERVER_CONNECTION_FAILED,
+            SERVER_CONNECTION_TIMEOUT,
+            DISCONNECTED
+        };
     };
 
     struct EventData
@@ -27,12 +51,12 @@ namespace SmartHomeDevice_n
         } data;
     };
 
-    class SmartHomeDeviceFsm : public StateMachine<State, EventId, EventData, std::ostream>, public EventSubscriber
+    class SmartHomeDeviceFsm : public StateMachine<State::Values, EventId, EventData, std::ostream>, public EventSubscriber
     {
     public:
-        explicit SmartHomeDeviceFsm(const State&);
+        explicit SmartHomeDeviceFsm(const State::Values&);
 
-        std::string stateToString(const State&) const override;
+        std::string stateToString(const State::Values&) const override;
         std::string eventToString(const EventId&) const override;
 
         void onEvent(EventSystem*, const Event&) override;

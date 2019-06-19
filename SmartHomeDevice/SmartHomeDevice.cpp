@@ -4,13 +4,25 @@ namespace SmartHomeDevice_n
 {
     SmartHomeDevice::SmartHomeDevice(const WifiConfiguration &configuration)
     : stateMachine(State::INITIAL),
-      configuration(configuration)
+      configuration(configuration),
+      timerManager(nullptr)
     {
         initEventSystem();
 
         initStateMachine();
 
+        initTimers();
+
         initTaskManager();
+    }
+
+    SmartHomeDevice::~SmartHomeDevice()
+    {
+        if (timerManager != nullptr)
+        {
+            delete timerManager;
+            timerManager = nullptr;
+        }
     }
 
     void SmartHomeDevice::initEventSystem()
@@ -25,7 +37,9 @@ namespace SmartHomeDevice_n
         events[Events::SERVER_CONNECTION_FAILED]   = eventSystem.createEvent();
         events[Events::SERVER_CONNECTION_TIMEOUT]  = eventSystem.createEvent();
         events[Events::DISCONNECTED]               = eventSystem.createEvent();
+        events[Events::TIMER_EXPIRED]              = eventSystem.createEvent();
 
+        // state machine subscriptions to events
         eventSystem.subscribe(events[Events::START],                      &stateMachine);
         eventSystem.subscribe(events[Events::NETWORK_SCAN_RESULTS_READY], &stateMachine);
         eventSystem.subscribe(events[Events::NETWORK_SCAN_TIMEOUT],       &stateMachine);
@@ -36,6 +50,9 @@ namespace SmartHomeDevice_n
         eventSystem.subscribe(events[Events::SERVER_CONNECTION_FAILED],   &stateMachine);
         eventSystem.subscribe(events[Events::SERVER_CONNECTION_TIMEOUT],  &stateMachine);
         eventSystem.subscribe(events[Events::DISCONNECTED],               &stateMachine);
+
+        // this class subscriptions to events
+        eventSystem.subscribe(events[Events::TIMER_EXPIRED], this);
     }
 
     void SmartHomeDevice::initStateMachine()
@@ -59,10 +76,21 @@ namespace SmartHomeDevice_n
         stateMachine.addTransition(State::CONNECTED,            events[Events::DISCONNECTED],               State::NETWORK_SCANNING,     nullptr);
     }
 
+    void SmartHomeDevice::initTimers()
+    {
+        if (timerManager == nullptr)
+        {
+            timerManager = new TimerManager(&eventSystem, events[Events::TIMER_EXPIRED], [this]() -> unsigned int { return this->getCurrentTime(); });
+
+            // TODO: create all timers
+        }
+    }
+
     void SmartHomeDevice::initTaskManager()
     {
-        taskManager.scheduleTask(this);
-        taskManager.scheduleTask(&eventSystem, Priority::HIGH);
+        (void)taskManager.scheduleTask(this);
+        (void)taskManager.scheduleTask(&eventSystem, Priority::HIGH);
+        (void)taskManager.scheduleTask(timerManager, Priority::HIGH);
     }
 
     void SmartHomeDevice::init()

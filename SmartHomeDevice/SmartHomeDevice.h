@@ -4,10 +4,12 @@
 #include "SmartHomeDeviceFsm.h"
 #include "EventSystem.h"
 #include "TaskManager.h"
+#include "TimerManager.h"
 
 namespace SmartHomeDevice_n
 {
     using namespace TaskManager_n;
+    using namespace TimerManager_n;
 
     namespace WifiStatus
     {
@@ -34,9 +36,10 @@ namespace SmartHomeDevice_n
     class SmartHomeDevice : public EventSubscriber, public Task
     {
     private:
-        EventSystem        eventSystem;
-        TaskManager        taskManager;
-        SmartHomeDeviceFsm stateMachine;
+        EventSystem         eventSystem;
+        SmartHomeDeviceFsm  stateMachine;
+        TimerManager       *timerManager;
+        TaskManager         taskManager;
 
         WifiConfiguration  configuration;
 
@@ -46,6 +49,7 @@ namespace SmartHomeDevice_n
 
         void initEventSystem();
         void initStateMachine();
+        void initTimers();
         void initTaskManager();
 
     protected:
@@ -60,9 +64,11 @@ namespace SmartHomeDevice_n
         virtual std::string         readData() = 0;
         virtual void                sendData(const std::string&) = 0;
         virtual WifiStatus::Values  getWifiStatus() = 0;
+        virtual unsigned int        getCurrentTime() = 0;
 
     public:
         SmartHomeDevice(const WifiConfiguration&);
+       ~SmartHomeDevice();
 
         void init() override;
         void go() override;

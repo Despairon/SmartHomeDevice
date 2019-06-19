@@ -37,7 +37,8 @@ namespace SmartHomeDevice_n
             SERVER_CONNECTED,
             SERVER_CONNECTION_FAILED,
             SERVER_CONNECTION_TIMEOUT,
-            DISCONNECTED
+            DISCONNECTED,
+            TIMER_EXPIRED
         };
     };
 

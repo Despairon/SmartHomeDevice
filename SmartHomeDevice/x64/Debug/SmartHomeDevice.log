@@ -1,2 +1,21 @@
-﻿  Main.cpp
-  SmartHomeDevice.vcxproj -> E:\Programs\SmartHomeDevice\x64\Debug\SmartHomeDevice.exe
+﻿  TimerManager.cpp
+  SmartHomeDevice.cpp
+  SmartHomeDeviceFsm.cpp
+d:\personal\smarthomedevice\smarthomedevice\common_library\statemachine\statemachine.hpp(62): warning C4101: 'e': unreferenced local variable
+  d:\personal\smarthomedevice\smarthomedevice\common_library\statemachine\statemachine.hpp(47): note: while compiling class template member function 'void FSM::StateMachine<SmartHomeDevice_n::State::Values,EventSystem_n::EventId,SmartHomeDevice_n::EventData,std::ostream>::execute(const EventType &,const EventDataType &,DebugIODeviceType *)'
+          with
+          [
+              EventType=EventSystem_n::EventId,
+              EventDataType=SmartHomeDevice_n::EventData,
+              DebugIODeviceType=std::ostream
+          ]
+  d:\personal\smarthomedevice\smarthomedevice\smarthomedevicefsm.cpp(49): note: see reference to function template instantiation 'void FSM::StateMachine<SmartHomeDevice_n::State::Values,EventSystem_n::EventId,SmartHomeDevice_n::EventData,std::ostream>::execute(const EventType &,const EventDataType &,DebugIODeviceType *)' being compiled
+          with
+          [
+              EventType=EventSystem_n::EventId,
+              EventDataType=SmartHomeDevice_n::EventData,
+              DebugIODeviceType=std::ostream
+          ]
+  d:\personal\smarthomedevice\smarthomedevice\smarthomedevicefsm.h(56): note: see reference to class template instantiation 'FSM::StateMachine<SmartHomeDevice_n::State::Values,EventSystem_n::EventId,SmartHomeDevice_n::EventData,std::ostream>' being compiled
+  Generating Code...
+  SmartHomeDevice.vcxproj -> D:\Personal\SmartHomeDevice\x64\Debug\SmartHomeDevice.exe

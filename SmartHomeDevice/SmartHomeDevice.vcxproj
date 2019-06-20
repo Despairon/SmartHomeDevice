@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{E0E7F9CC-EA7E-41C6-8F9D-E449D35097A8}</ProjectGuid>
     <RootNamespace>SmartHomeDevice</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\Timer;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\TaskManager;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\XmlReader;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\StateMachine;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\HttpMessage;E:\Programs\SmartHomeDevice\SmartHomeDevice\Common_Library\EventSystem;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\Common_Library\Timer;$(ProjectDir)\Common_Library\TaskManager;$(ProjectDir)\Common_Library\XmlReader;$(ProjectDir)\Common_Library\StateMachine;$(ProjectDir)\Common_Library\HttpMessage;$(ProjectDir)\Common_Library\EventSystem;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

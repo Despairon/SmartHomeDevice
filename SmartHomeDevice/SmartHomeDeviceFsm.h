@@ -30,7 +30,9 @@ namespace SmartHomeDevice_n
         {
             START,
             NETWORK_SCAN_RESULTS_READY,
+            NETWORK_SCAN_FAILED,
             NETWORK_SCAN_TIMEOUT,
+            NETWORK_PICKED,
             WIFI_CONNECTED,
             WIFI_CONNECTION_FAILED,
             WIFI_CONNECTION_TIMEOUT,
@@ -48,7 +50,7 @@ namespace SmartHomeDevice_n
 
         union
         {
-            // TODO: fill event data
+            NetworkInfo networkInfo;
         } data;
     };
 

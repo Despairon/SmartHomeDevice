@@ -8,6 +8,8 @@
 
 namespace SmartHomeDevice_n
 {
+    #define MAX_SSID_LENGTH 128U
+
     using namespace TaskManager_n;
     using namespace TimerManager_n;
 
@@ -29,8 +31,17 @@ namespace SmartHomeDevice_n
     {
         std::map<std::string, std::string> knownNetworks;
         std::map<std::string, unsigned short> knownHosts;
-        const unsigned short delayForWifiConnection;
-        const unsigned short delayForHostConnection;
+        const unsigned short networkScanTimeout;
+        const unsigned short wifiConnectionTimeout;
+        const unsigned short serverConnectionTimeout;
+    };
+
+    struct NetworkInfo
+    {
+        char ssid[MAX_SSID_LENGTH];
+        int  channel;
+        int  rssi;
+        bool isOpen;
     };
 
     class SmartHomeDevice : public EventSubscriber, public Task
@@ -41,22 +52,29 @@ namespace SmartHomeDevice_n
         TimerManager       *timerManager;
         TaskManager         taskManager;
 
-        WifiConfiguration  configuration;
+        WifiConfiguration   configuration;
 
         std::map<Events::Values, EventId> events;
 
-        std::map<std::string, std::string> availableNetworks;
+        // timers
+        TimerHandle networkScanTimer;
+        TimerHandle wifiConnectionTimer;
+        TimerHandle serverConnectionTimer;
 
         void initEventSystem();
         void initStateMachine();
         void initTimers();
         void initTaskManager();
 
+        // FSM callbacks
+        void startNetworksScan(const EventData&);
+
     protected:
         // WiFi interface
         virtual void                connectToWiFi(const std::string&, const std::string&) = 0;
         virtual void                disconnectFromWiFi() = 0;
-        virtual void                scanForNetworks() = 0;
+        virtual void                scanForNetworks(std::function<void(int)>) = 0;
+        virtual NetworkInfo         getInfoForNetwork(const byte&) = 0;
         virtual void                connectToServer(const std::string&, const unsigned short&) = 0;
         virtual void                disconnectFromServer() = 0;
         virtual bool                dataAvailable() = 0;

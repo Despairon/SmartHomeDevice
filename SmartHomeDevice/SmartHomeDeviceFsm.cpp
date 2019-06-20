@@ -24,7 +24,9 @@ namespace SmartHomeDevice_n
         {
             case Events::Values::START:                      return "START";
             case Events::Values::NETWORK_SCAN_RESULTS_READY: return "NETWORK_SCAN_RESULTS_READY";
+            case Events::Values::NETWORK_SCAN_FAILED:        return "NETWORK_SCAN_FAILED";
             case Events::Values::NETWORK_SCAN_TIMEOUT:       return "NETWORK_SCAN_TIMEOUT";
+            case Events::Values::NETWORK_PICKED:             return "NETWORK_PICKED";
             case Events::Values::WIFI_CONNECTED:             return "WIFI_CONNECTED";
             case Events::Values::WIFI_CONNECTION_FAILED:     return "WIFI_CONNECTION_FAILED";
             case Events::Values::WIFI_CONNECTION_TIMEOUT:    return "WIFI_CONNECTION_TIMEOUT";
@@ -40,6 +42,8 @@ namespace SmartHomeDevice_n
     void SmartHomeDeviceFsm::onEvent(EventSystem* sender, const Event &event)
     {
         EventData eventData;
+
+        eventData.sender = sender;
 
         event.getData(&eventData.data, sizeof(eventData.data));
 

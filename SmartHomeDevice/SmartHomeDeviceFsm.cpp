@@ -8,11 +8,11 @@ namespace SmartHomeDevice_n
     {
         switch (state)
         {
-            case State::Values::INITIAL:              return "INITIAL";
-            case State::Values::NETWORK_SCANNING:     return "NETWORK_SCANNING";
-            case State::Values::CONNECTING_TO_WIFI:   return "CONNECTING_TO_WIFI";
-            case State::Values::CONNECTING_TO_SERVER: return "CONNECTING_TO_SERVER";
-            case State::Values::CONNECTED:            return "CONNECTED";
+            case State::INITIAL:              return "INITIAL";
+            case State::NETWORK_SCANNING:     return "NETWORK_SCANNING";
+            case State::CONNECTING_TO_WIFI:   return "CONNECTING_TO_WIFI";
+            case State::CONNECTING_TO_SERVER: return "CONNECTING_TO_SERVER";
+            case State::CONNECTED:            return "CONNECTED";
             
         default: return "UNKNOWN_STATE";
         }
@@ -22,18 +22,24 @@ namespace SmartHomeDevice_n
     {
         switch (event)
         {
-            case Events::Values::START:                      return "START";
-            case Events::Values::NETWORK_SCAN_RESULTS_READY: return "NETWORK_SCAN_RESULTS_READY";
-            case Events::Values::NETWORK_SCAN_FAILED:        return "NETWORK_SCAN_FAILED";
-            case Events::Values::NETWORK_SCAN_TIMEOUT:       return "NETWORK_SCAN_TIMEOUT";
-            case Events::Values::NETWORK_PICKED:             return "NETWORK_PICKED";
-            case Events::Values::WIFI_CONNECTED:             return "WIFI_CONNECTED";
-            case Events::Values::WIFI_CONNECTION_FAILED:     return "WIFI_CONNECTION_FAILED";
-            case Events::Values::WIFI_CONNECTION_TIMEOUT:    return "WIFI_CONNECTION_TIMEOUT";
-            case Events::Values::SERVER_CONNECTED:           return "SERVER_CONNECTED";
-            case Events::Values::SERVER_CONNECTION_FAILED:   return "SERVER_CONNECTION_FAILED";
-            case Events::Values::SERVER_CONNECTION_TIMEOUT:  return "SERVER_CONNECTION_TIMEOUT";
-            case Events::Values::DISCONNECTED:               return "DISCONNECTED";
+            case Events::START:                                 return "START";
+            case Events::NETWORK_SCAN_RESULTS_READY:            return "NETWORK_SCAN_RESULTS_READY";
+            case Events::NETWORK_SCAN_FAILED:                   return "NETWORK_SCAN_FAILED";
+            case Events::NETWORK_SCAN_TIMEOUT:                  return "NETWORK_SCAN_TIMEOUT";
+            case Events::NETWORK_PICKED:                        return "NETWORK_PICKED";
+            case Events::WIFI_CONNECTED:                        return "WIFI_CONNECTED";
+            case Events::WIFI_CONNECTION_FAILED:                return "WIFI_CONNECTION_FAILED";
+            case Events::WIFI_CONNECTION_RETRIES_EXHAUSTED:     return "WIFI_CONNECTION_RETRIES_EXHAUSTED";
+            case Events::WIFI_CONNECTION_TIMEOUT:               return "WIFI_CONNECTION_TIMEOUT";
+            case Events::SERVER_PICKED:                         return "SERVER_PICKED";
+            case Events::SERVER_CONNECTED:                      return "SERVER_CONNECTED";
+            case Events::SERVER_CONNECTION_FAILED:              return "SERVER_CONNECTION_FAILED";
+            case Events::SERVER_CONNECTION_RETRIES_EXHAUSTED:   return "SERVER_CONNECTION_RETRIES_EXHAUSTED";
+            case Events::SERVER_CONNECTION_TIMEOUT:             return "SERVER_CONNECTION_TIMEOUT";
+            case Events::DATA_AVAILABLE:                        return "DATA_AVAILABLE";
+            case Events::DISCONNECTED:                          return "DISCONNECTED";
+            case Events::TIMER_EXPIRED:                         return "TIMER_EXPIRED";
+            case Events::FATAL_ERROR:                           return "FATAL_ERROR";
             
             default: return "UNKNOWN_EVENT";
         }

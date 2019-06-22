@@ -7,6 +7,10 @@
 
 namespace SmartHomeDevice_n
 {
+    #define MAX_SSID_LENGTH 64
+    #define MAX_ERROR_LENGTH 128
+    #define MAX_HOSTNAME_LENGTH 64
+    
     using namespace FSM;
     using namespace EventSystem_n;
 
@@ -35,13 +39,32 @@ namespace SmartHomeDevice_n
             NETWORK_PICKED,
             WIFI_CONNECTED,
             WIFI_CONNECTION_FAILED,
+            WIFI_CONNECTION_RETRIES_EXHAUSTED,
             WIFI_CONNECTION_TIMEOUT,
             SERVER_CONNECTED,
+            SERVER_PICKED,
             SERVER_CONNECTION_FAILED,
+            SERVER_CONNECTION_RETRIES_EXHAUSTED,
             SERVER_CONNECTION_TIMEOUT,
+            DATA_AVAILABLE,
             DISCONNECTED,
-            TIMER_EXPIRED
+            TIMER_EXPIRED,
+            FATAL_ERROR
         };
+    };
+
+    struct NetworkInfo
+    {
+        char ssid[MAX_SSID_LENGTH];
+        int  channel;
+        int  rssi;
+        bool isOpen;
+    };
+
+    struct HostInfo
+    {
+        char host[MAX_HOSTNAME_LENGTH];
+        unsigned short port;
     };
 
     struct EventData
@@ -51,6 +74,10 @@ namespace SmartHomeDevice_n
         union
         {
             NetworkInfo networkInfo;
+            
+            HostInfo hostInfo;
+
+            char errorStr[MAX_ERROR_LENGTH];
         } data;
     };
 

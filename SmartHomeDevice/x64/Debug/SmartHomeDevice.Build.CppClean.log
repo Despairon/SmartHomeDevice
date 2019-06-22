@@ -3,9 +3,13 @@ e:\programs\smarthomedevice\smarthomedevice\x64\debug\vc141.idb
 e:\programs\smarthomedevice\smarthomedevice\x64\debug\smarthomedevicefsm.obj
 e:\programs\smarthomedevice\smarthomedevice\x64\debug\smarthomedevice.obj
 e:\programs\smarthomedevice\smarthomedevice\x64\debug\main.obj
+e:\programs\smarthomedevice\smarthomedevice\x64\debug\taskmanager.obj
+e:\programs\smarthomedevice\smarthomedevice\x64\debug\task.obj
 e:\programs\smarthomedevice\smarthomedevice\x64\debug\httpmessage.obj
 e:\programs\smarthomedevice\smarthomedevice\x64\debug\eventsystem.obj
 e:\programs\smarthomedevice\smarthomedevice\x64\debug\event.obj
+e:\programs\smarthomedevice\smarthomedevice\x64\debug\timermanager.obj
+e:\programs\smarthomedevice\smarthomedevice\x64\debug\timer.obj
 e:\programs\smarthomedevice\x64\debug\smarthomedevice.ilk
 e:\programs\smarthomedevice\x64\debug\smarthomedevice.exe
 e:\programs\smarthomedevice\x64\debug\smarthomedevice.pdb

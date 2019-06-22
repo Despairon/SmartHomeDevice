@@ -9,8 +9,8 @@
     <ClCompile Include="Common_Library\HttpMessage\HttpMessage.cpp" />
     <ClCompile Include="Common_Library\TaskManager\Task.cpp" />
     <ClCompile Include="Common_Library\TaskManager\TaskManager.cpp" />
-    <ClCompile Include="Common_Library\Timer\Timer.cpp" />
-    <ClCompile Include="Common_Library\Timer\TimerManager.cpp" />
+    <ClCompile Include="Common_Library\CrossPlatformSyncTimer\Timer.cpp" />
+    <ClCompile Include="Common_Library\CrossPlatformSyncTimer\TimerManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SmartHomeDevice.h" />
@@ -22,7 +22,7 @@
     <ClInclude Include="Common_Library\StateMachine\StateMachine.hpp" />
     <ClInclude Include="Common_Library\TaskManager\Task.h" />
     <ClInclude Include="Common_Library\TaskManager\TaskManager.h" />
-    <ClInclude Include="Common_Library\Timer\Timer.h" />
-    <ClInclude Include="Common_Library\Timer\TimerManager.h" />
+    <ClInclude Include="Common_Library\CrossPlatformSyncTimer\Timer.h" />
+    <ClInclude Include="Common_Library\CrossPlatformSyncTimer\TimerManager.h" />
   </ItemGroup>
 </Project>

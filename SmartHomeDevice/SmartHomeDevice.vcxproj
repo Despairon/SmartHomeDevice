@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{E0E7F9CC-EA7E-41C6-8F9D-E449D35097A8}</ProjectGuid>
     <RootNamespace>SmartHomeDevice</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)\Common_Library\Timer;$(ProjectDir)\Common_Library\TaskManager;$(ProjectDir)\Common_Library\XmlReader;$(ProjectDir)\Common_Library\StateMachine;$(ProjectDir)\Common_Library\HttpMessage;$(ProjectDir)\Common_Library\EventSystem;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\Common_Library\CrossPlatformSyncTimer;$(ProjectDir)\Common_Library\TaskManager;$(ProjectDir)\Common_Library\XmlReader;$(ProjectDir)\Common_Library\StateMachine;$(ProjectDir)\Common_Library\HttpMessage;$(ProjectDir)\Common_Library\EventSystem;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,18 +118,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Common_Library\CrossPlatformSyncTimer\Timer.cpp" />
+    <ClCompile Include="Common_Library\CrossPlatformSyncTimer\TimerManager.cpp" />
     <ClCompile Include="Common_Library\EventSystem\Event.cpp" />
     <ClCompile Include="Common_Library\EventSystem\EventSystem.cpp" />
     <ClCompile Include="Common_Library\HttpMessage\HttpMessage.cpp" />
     <ClCompile Include="Common_Library\TaskManager\Task.cpp" />
     <ClCompile Include="Common_Library\TaskManager\TaskManager.cpp" />
-    <ClCompile Include="Common_Library\Timer\Timer.cpp" />
-    <ClCompile Include="Common_Library\Timer\TimerManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SmartHomeDevice.cpp" />
     <ClCompile Include="SmartHomeDeviceFsm.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common_Library\CrossPlatformSyncTimer\Timer.h" />
+    <ClInclude Include="Common_Library\CrossPlatformSyncTimer\TimerManager.h" />
     <ClInclude Include="Common_Library\EventSystem\Event.h" />
     <ClInclude Include="Common_Library\EventSystem\EventSubscriber.h" />
     <ClInclude Include="Common_Library\EventSystem\EventSystem.h" />
@@ -137,8 +139,6 @@
     <ClInclude Include="Common_Library\StateMachine\StateMachine.hpp" />
     <ClInclude Include="Common_Library\TaskManager\Task.h" />
     <ClInclude Include="Common_Library\TaskManager\TaskManager.h" />
-    <ClInclude Include="Common_Library\Timer\Timer.h" />
-    <ClInclude Include="Common_Library\Timer\TimerManager.h" />
     <ClInclude Include="SmartHomeDevice.h" />
     <ClInclude Include="SmartHomeDeviceFsm.h" />
   </ItemGroup>

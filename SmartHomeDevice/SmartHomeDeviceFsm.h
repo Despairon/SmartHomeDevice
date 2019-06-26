@@ -1,9 +1,8 @@
 #pragma once
 
-#include <iostream>
-
 #include "StateMachine.hpp"
 #include "EventSystem.h"
+#include "DebugDevice.h"
 
 namespace SmartHomeDevice_n
 {
@@ -13,6 +12,7 @@ namespace SmartHomeDevice_n
     
     using namespace FSM;
     using namespace EventSystem_n;
+    using namespace DebugDevice_n;
 
     using byte = unsigned char;
 
@@ -81,8 +81,11 @@ namespace SmartHomeDevice_n
         } data;
     };
 
-    class SmartHomeDeviceFsm : public StateMachine<State::Values, EventId, EventData, std::ostream>, public EventSubscriber
+    class SmartHomeDeviceFsm : public StateMachine<State::Values, EventId, EventData, DebugDevice>, public EventSubscriber
     {
+    private:
+        DebugDevice *debugDevice;
+
     public:
         explicit SmartHomeDeviceFsm(const State::Values&);
 
@@ -90,5 +93,7 @@ namespace SmartHomeDevice_n
         std::string eventToString(const EventId&) const override;
 
         void onEvent(EventSystem*, const Event&) override;
+
+        void setDebugDevice(DebugDevice*);
     };
 }

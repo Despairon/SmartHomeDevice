@@ -1,22 +1,2 @@
-﻿  Timer.cpp
-  TimerManager.cpp
-  Event.cpp
-  EventSystem.cpp
-  HttpMessage.cpp
-  Task.cpp
-  TaskManager.cpp
-  Main.cpp
-  SmartHomeDevice.cpp
-  SmartHomeDeviceFsm.cpp
-e:\programs\smarthomedevice\smarthomedevice\common_library\statemachine\statemachine.hpp(62): warning C4101: e: неиспользованная локальная переменная
-  e:\programs\smarthomedevice\smarthomedevice\common_library\statemachine\statemachine.hpp(47): note: при компиляции функции-члена "<Нет данных>" класса класс <Нет данных>
-  e:\programs\smarthomedevice\smarthomedevice\smarthomedevicefsm.cpp(56): note: выполняется компиляция ссылки на экземпляр шаблон функции "void FSM::StateMachine<SmartHomeDevice_n::State::Values,EventSystem_n::EventId,SmartHomeDevice_n::EventData,std::ostream>::execute(const EventType &,const EventDataType &,DebugIODeviceType *)"
-          with
-          [
-              EventType=EventSystem_n::EventId,
-              EventDataType=SmartHomeDevice_n::EventData,
-              DebugIODeviceType=std::ostream
-          ]
-  e:\programs\smarthomedevice\smarthomedevice\smarthomedevicefsm.h(84): note: выполняется компиляция ссылки на экземпляр шаблон класс "FSM::StateMachine<SmartHomeDevice_n::State::Values,EventSystem_n::EventId,SmartHomeDevice_n::EventData,std::ostream>"
-  Создание кода...
+﻿  DebugDevice.cpp
   SmartHomeDevice.vcxproj -> E:\Programs\SmartHomeDevice\x64\Debug\SmartHomeDevice.exe

@@ -5,12 +5,14 @@
 #include "EventSystem.h"
 #include "TaskManager.h"
 #include "TimerManager.h"
+#include "DebugDevice.h"
 
 namespace SmartHomeDevice_n
 {
     using namespace TaskManager_n;
     using namespace TimerManager_n;
     using namespace HttpMessage_n;
+    using namespace DebugDevice_n;
 
     namespace WifiStatus
     {
@@ -47,6 +49,7 @@ namespace SmartHomeDevice_n
         SmartHomeDeviceFsm  stateMachine;
         TimerManager       *timerManager;
         TaskManager         taskManager;
+        DebugDevice        *debugDevice;
 
         WifiConfiguration   configuration;
 
@@ -94,6 +97,7 @@ namespace SmartHomeDevice_n
         virtual WifiStatus::Values  getWifiStatus() = 0;
         virtual unsigned int        getCurrentTime() = 0;
         virtual void                reset() = 0;
+        virtual void                debugPrint(const std::string &debugMessage) = 0;
 
         void sendHttpMessage(const HttpMessage&);
     public:

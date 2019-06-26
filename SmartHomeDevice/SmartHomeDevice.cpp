@@ -9,8 +9,14 @@ namespace SmartHomeDevice_n
       configuration(configuration),
       timerManager(nullptr),
       currentWifiStatus(WifiStatus::DISCONNECTED),
-      currentServerConnStatus(false)
+      currentServerConnStatus(false),
+      debugDevice(nullptr)
     {
+        debugDevice = new DebugDevice([this](const std::string &debugMessage)
+        {
+            this->debugPrint(debugMessage);
+        });
+
         initEventSystem();
 
         initStateMachine();
@@ -26,6 +32,12 @@ namespace SmartHomeDevice_n
         {
             delete timerManager;
             timerManager = nullptr;
+        }
+
+        if (debugDevice != nullptr)
+        {
+            delete debugDevice;
+            debugDevice = nullptr;
         }
     }
 
@@ -73,6 +85,8 @@ namespace SmartHomeDevice_n
 
     void SmartHomeDevice::initStateMachine()
     {
+        stateMachine.setDebugDevice(debugDevice);
+
         stateMachine.addTransition(State::INITIAL,              events[Events::START],                               State::NETWORK_SCANNING,     FSM_CALLBACK_CLOSURE(fsm_startNetworksScan));
         stateMachine.addTransition(State::INITIAL,              events[Events::FATAL_ERROR],                         State::INITIAL,              FSM_CALLBACK_CLOSURE(fsm_handleFatalError));
 
@@ -393,7 +407,7 @@ namespace SmartHomeDevice_n
     {
         auto error = eventData.data.errorStr;
         
-        // TODO: implement debug device. Then pring the error here.
+        *debugDevice << "Fatal error: " << error;
 
         // add some delay so the debug message can get to serial port
         for (int i = 0; i < 10000; i++);

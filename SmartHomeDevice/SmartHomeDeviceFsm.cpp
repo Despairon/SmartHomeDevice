@@ -2,7 +2,7 @@
 
 namespace SmartHomeDevice_n
 {
-    SmartHomeDeviceFsm::SmartHomeDeviceFsm(const State::Values &initialState) : StateMachine(initialState) { }
+    SmartHomeDeviceFsm::SmartHomeDeviceFsm(const State::Values &initialState) : StateMachine(initialState), debugDevice(nullptr) { }
 
     std::string SmartHomeDeviceFsm::stateToString(const State::Values &state) const
     {
@@ -53,6 +53,11 @@ namespace SmartHomeDevice_n
 
         event.getData(&eventData.data, sizeof(eventData.data));
 
-        execute(event.getId(), eventData, &std::cout);
+        execute(event.getId(), eventData, debugDevice);
+    }
+
+    void SmartHomeDeviceFsm::setDebugDevice(DebugDevice *debugDevice)
+    {
+        this->debugDevice = debugDevice;
     }
 }

@@ -2,3 +2,6 @@
 	path = SmartHomeDevice/Common_Library
 	url = https://github.com/Despairon/Common_library.git
 	branch = CommonsForSmartHomeDevice
+[submodule "SmartHomeDevice/rapidjson"]
+	path = SmartHomeDevice/rapidjson
+	url = https://github.com/Tencent/rapidjson.git

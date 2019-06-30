@@ -6,6 +6,7 @@
 #include "TaskManager.h"
 #include "TimerManager.h"
 #include "DebugDevice.h"
+#include "DeviceParameter.h"
 
 namespace SmartHomeDevice_n
 {
@@ -38,6 +39,7 @@ namespace SmartHomeDevice_n
         const unsigned short  networkScanTimeout;
         const unsigned short  wifiConnectionTimeout;
         const unsigned short  serverConnectionTimeout;
+        const unsigned short  deviceStatusRequestTimeout;
         const byte            maxWifiConnectionRetries;
         const byte            maxServerConnectionRetries;
     };
@@ -45,6 +47,9 @@ namespace SmartHomeDevice_n
     class SmartHomeDevice : public EventSubscriber, public Task
     {
     private:
+        unsigned long deviceId;
+        std::string   deviceName;
+
         EventSystem         eventSystem;
         SmartHomeDeviceFsm  stateMachine;
         TimerManager       *timerManager;
@@ -55,18 +60,23 @@ namespace SmartHomeDevice_n
 
         std::map<Events::Values, EventId> events;
 
+        std::list<DeviceParameter> paramsList;
+
         // timers
         TimerHandle networkScanTimer;
         TimerHandle wifiConnectionTimer;
         TimerHandle serverConnectionTimer;
+        TimerHandle deviceStatusRequestTimer;
 
         // misc variables
-        byte               wifiConnectionRetries;
-        byte               serverConnectionRetries;
-        WifiStatus::Values currentWifiStatus;
-        bool               currentServerConnStatus;
+        std::string          connectedHost;
+        byte                 wifiConnectionRetries;
+        byte                 serverConnectionRetries;
+        WifiStatus::Values   currentWifiStatus;
+        bool                 currentServerConnStatus;
 
         // init funcs
+        void initParamsList();
         void initEventSystem();
         void initStateMachine();
         void initTimers();
@@ -79,8 +89,12 @@ namespace SmartHomeDevice_n
         void fsm_startServerConnection(const EventData&);
         void fsm_connectToServer(const EventData&);
         void fsm_handleFatalError(const EventData&);
+        void fsm_handleConnectionToServer(const EventData&);
+        void fsm_requestDeviceStatus(const EventData&);
         void fsm_goIdle(const EventData&);
         void fsm_readData(const EventData&);
+
+        SmartHomeDevice() = delete;
 
     protected:
         // WiFi interface
@@ -100,8 +114,12 @@ namespace SmartHomeDevice_n
         virtual void                debugPrint(const std::string &debugMessage) = 0;
 
         void sendHttpMessage(const HttpMessage&);
+
+        void addParam(const DeviceParameter&);
+        void setParamValue(const std::string&, const std::string&);
+        const std::string &getParamValue(const std::string&);
     public:
-        SmartHomeDevice(const WifiConfiguration&);
+        SmartHomeDevice(const std::string&, const WifiConfiguration&);
        ~SmartHomeDevice();
 
         void init() override;

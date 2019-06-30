@@ -1,11 +1,13 @@
 #include "SmartHomeDevice.h"
+#include "rapidjson.h"
 
 namespace SmartHomeDevice_n
 {
     #define FSM_CALLBACK_CLOSURE(func) [this](const EventData &eventData) { this->func(eventData); }
 
-    SmartHomeDevice::SmartHomeDevice(const WifiConfiguration &configuration)
-    : stateMachine(State::INITIAL),
+    SmartHomeDevice::SmartHomeDevice(const std::string &deviceName, const WifiConfiguration &configuration)
+    : deviceName(deviceName),
+      stateMachine(State::INITIAL),
       configuration(configuration),
       timerManager(nullptr),
       currentWifiStatus(WifiStatus::DISCONNECTED),
@@ -16,6 +18,8 @@ namespace SmartHomeDevice_n
         {
             this->debugPrint(debugMessage);
         });
+
+        initParamsList();
 
         initEventSystem();
 
@@ -41,6 +45,28 @@ namespace SmartHomeDevice_n
         }
     }
 
+    void SmartHomeDevice::initParamsList()
+    {
+        // default mandatory params set
+
+        auto deviceIdParam     = DeviceParameter("Device_ID",     DeviceParamType::TEXTBOX, true);
+        auto deviceNameParam   = DeviceParameter("Device_Name",   DeviceParamType::TEXTBOX, true);
+        auto deviceStatusParam = DeviceParameter("Device_Status", DeviceParamType::TEXTBOX, true);
+
+        deviceIdParam.addValue("-1"); 
+        deviceIdParam.setCurrentValue("-1");
+
+        deviceNameParam.addValue(deviceName.empty() ? "SmartHomeDevice" : deviceName);
+        deviceNameParam.setCurrentValue(deviceName.empty() ? "SmartHomeDevice" : deviceName);
+
+        deviceStatusParam.addValue("Online");
+        deviceStatusParam.setCurrentValue("Online");
+
+        paramsList.push_back(deviceIdParam);
+        paramsList.push_back(deviceNameParam);
+        paramsList.push_back(deviceStatusParam);
+    }
+
     void SmartHomeDevice::initEventSystem()
     {
         events[Events::START]                               = eventSystem.createEvent();
@@ -57,27 +83,29 @@ namespace SmartHomeDevice_n
         events[Events::SERVER_CONNECTION_FAILED]            = eventSystem.createEvent();
         events[Events::SERVER_CONNECTION_RETRIES_EXHAUSTED] = eventSystem.createEvent();
         events[Events::SERVER_CONNECTION_TIMEOUT]           = eventSystem.createEvent();
+        events[Events::DEVICE_STATUS_REQUEST_TIMEOUT]       = eventSystem.createEvent();
         events[Events::DATA_AVAILABLE]                      = eventSystem.createEvent();
         events[Events::DISCONNECTED]                        = eventSystem.createEvent();
         events[Events::TIMER_EXPIRED]                       = eventSystem.createEvent();
         events[Events::FATAL_ERROR]                         = eventSystem.createEvent();
 
         // state machine subscriptions to events
-        eventSystem.subscribe(events[Events::START],                      &stateMachine);
-        eventSystem.subscribe(events[Events::NETWORK_SCAN_RESULTS_READY], &stateMachine);
-        eventSystem.subscribe(events[Events::NETWORK_SCAN_TIMEOUT],       &stateMachine);
-        eventSystem.subscribe(events[Events::NETWORK_SCAN_FAILED],        &stateMachine);
-        eventSystem.subscribe(events[Events::NETWORK_PICKED],             &stateMachine);
-        eventSystem.subscribe(events[Events::WIFI_CONNECTED],             &stateMachine);
-        eventSystem.subscribe(events[Events::WIFI_CONNECTION_FAILED],     &stateMachine);
-        eventSystem.subscribe(events[Events::WIFI_CONNECTION_TIMEOUT],    &stateMachine);
-        eventSystem.subscribe(events[Events::SERVER_PICKED],              &stateMachine);
-        eventSystem.subscribe(events[Events::SERVER_CONNECTED],           &stateMachine);
-        eventSystem.subscribe(events[Events::SERVER_CONNECTION_FAILED],   &stateMachine);
-        eventSystem.subscribe(events[Events::SERVER_CONNECTION_TIMEOUT],  &stateMachine);
-        eventSystem.subscribe(events[Events::DATA_AVAILABLE],             &stateMachine);
-        eventSystem.subscribe(events[Events::DISCONNECTED],               &stateMachine);
-        eventSystem.subscribe(events[Events::FATAL_ERROR],                &stateMachine);
+        eventSystem.subscribe(events[Events::START],                         &stateMachine);
+        eventSystem.subscribe(events[Events::NETWORK_SCAN_RESULTS_READY],    &stateMachine);
+        eventSystem.subscribe(events[Events::NETWORK_SCAN_TIMEOUT],          &stateMachine);
+        eventSystem.subscribe(events[Events::NETWORK_SCAN_FAILED],           &stateMachine);
+        eventSystem.subscribe(events[Events::NETWORK_PICKED],                &stateMachine);
+        eventSystem.subscribe(events[Events::WIFI_CONNECTED],                &stateMachine);
+        eventSystem.subscribe(events[Events::WIFI_CONNECTION_FAILED],        &stateMachine);
+        eventSystem.subscribe(events[Events::WIFI_CONNECTION_TIMEOUT],       &stateMachine);
+        eventSystem.subscribe(events[Events::SERVER_PICKED],                 &stateMachine);
+        eventSystem.subscribe(events[Events::SERVER_CONNECTED],              &stateMachine);
+        eventSystem.subscribe(events[Events::SERVER_CONNECTION_FAILED],      &stateMachine);
+        eventSystem.subscribe(events[Events::SERVER_CONNECTION_TIMEOUT],     &stateMachine);
+        eventSystem.subscribe(events[Events::DEVICE_STATUS_REQUEST_TIMEOUT], &stateMachine);
+        eventSystem.subscribe(events[Events::DATA_AVAILABLE],                &stateMachine);
+        eventSystem.subscribe(events[Events::DISCONNECTED],                  &stateMachine);
+        eventSystem.subscribe(events[Events::FATAL_ERROR],                   &stateMachine);
 
         // this class subscriptions to events
         eventSystem.subscribe(events[Events::TIMER_EXPIRED], this);
@@ -107,13 +135,14 @@ namespace SmartHomeDevice_n
         stateMachine.addTransition(State::CONNECTING_TO_WIFI,   events[Events::FATAL_ERROR],                         State::INITIAL,              FSM_CALLBACK_CLOSURE(fsm_handleFatalError));
 
         stateMachine.addTransition(State::CONNECTING_TO_SERVER, events[Events::SERVER_PICKED],                       State::CONNECTING_TO_SERVER, FSM_CALLBACK_CLOSURE(fsm_connectToServer));
-        stateMachine.addTransition(State::CONNECTING_TO_SERVER, events[Events::SERVER_CONNECTED],                    State::CONNECTED,            FSM_CALLBACK_CLOSURE(fsm_goIdle));
+        stateMachine.addTransition(State::CONNECTING_TO_SERVER, events[Events::SERVER_CONNECTED],                    State::CONNECTED,            FSM_CALLBACK_CLOSURE(fsm_handleConnectionToServer));
         stateMachine.addTransition(State::CONNECTING_TO_SERVER, events[Events::SERVER_CONNECTION_FAILED],            State::CONNECTING_TO_SERVER, FSM_CALLBACK_CLOSURE(fsm_connectToServer));
         stateMachine.addTransition(State::CONNECTING_TO_SERVER, events[Events::SERVER_CONNECTION_RETRIES_EXHAUSTED], State::NETWORK_SCANNING,     FSM_CALLBACK_CLOSURE(fsm_startNetworksScan));
         stateMachine.addTransition(State::CONNECTING_TO_SERVER, events[Events::SERVER_CONNECTION_TIMEOUT],           State::NETWORK_SCANNING,     FSM_CALLBACK_CLOSURE(fsm_startNetworksScan));
         stateMachine.addTransition(State::CONNECTING_TO_SERVER, events[Events::DISCONNECTED],                        State::NETWORK_SCANNING,     FSM_CALLBACK_CLOSURE(fsm_startNetworksScan));
         stateMachine.addTransition(State::CONNECTING_TO_SERVER, events[Events::FATAL_ERROR],                         State::INITIAL,              FSM_CALLBACK_CLOSURE(fsm_handleFatalError));
 
+        stateMachine.addTransition(State::CONNECTED,            events[Events::DEVICE_STATUS_REQUEST_TIMEOUT],       State::CONNECTED,            FSM_CALLBACK_CLOSURE(fsm_requestDeviceStatus));
         stateMachine.addTransition(State::CONNECTED,            events[Events::DATA_AVAILABLE],                      State::CONNECTED,            FSM_CALLBACK_CLOSURE(fsm_readData));
         stateMachine.addTransition(State::CONNECTED,            events[Events::DISCONNECTED],                        State::NETWORK_SCANNING,     FSM_CALLBACK_CLOSURE(fsm_startNetworksScan));
         stateMachine.addTransition(State::CONNECTED,            events[Events::FATAL_ERROR],                         State::INITIAL,              FSM_CALLBACK_CLOSURE(fsm_handleFatalError));
@@ -125,9 +154,10 @@ namespace SmartHomeDevice_n
         {
             timerManager = new TimerManager(&eventSystem, events[Events::TIMER_EXPIRED], [this]() -> unsigned int { return this->getCurrentTime(); });
 
-            networkScanTimer      = timerManager->createTimer(configuration.networkScanTimeout);
-            wifiConnectionTimer   = timerManager->createTimer(configuration.wifiConnectionTimeout);
-            serverConnectionTimer = timerManager->createTimer(configuration.serverConnectionTimeout);
+            networkScanTimer         = timerManager->createTimer(configuration.networkScanTimeout);
+            wifiConnectionTimer      = timerManager->createTimer(configuration.wifiConnectionTimeout);
+            serverConnectionTimer    = timerManager->createTimer(configuration.serverConnectionTimeout);
+            deviceStatusRequestTimer = timerManager->createTimer(configuration.deviceStatusRequestTimeout);
         }
     }
 
@@ -145,7 +175,6 @@ namespace SmartHomeDevice_n
 
     void SmartHomeDevice::go()
     {
-        // TODO: I don't think it should be checked only in "connected" state. I think this logic should be in FSM
         if (stateMachine.state() == State::CONNECTED)
         {
             // check connection to WiFi
@@ -191,11 +220,12 @@ namespace SmartHomeDevice_n
 
     void SmartHomeDevice::onEvent(EventSystem *sender, const Event &event)
     {
-        static const auto tmrToEventsMap = std::map<TimerHandle, EventId>
+        auto tmrToEventsMap = std::map<TimerHandle, EventId>
         {
-            {networkScanTimer,      events[Events::NETWORK_SCAN_TIMEOUT]},
-            {wifiConnectionTimer,   events[Events::WIFI_CONNECTION_TIMEOUT]},
-            {serverConnectionTimer, events[Events::SERVER_CONNECTION_TIMEOUT]}
+            {networkScanTimer,         events[Events::NETWORK_SCAN_TIMEOUT]},
+            {wifiConnectionTimer,      events[Events::WIFI_CONNECTION_TIMEOUT]},
+            {serverConnectionTimer,    events[Events::SERVER_CONNECTION_TIMEOUT]},
+            {deviceStatusRequestTimer, events[Events::DEVICE_STATUS_REQUEST_TIMEOUT]}
         };
 
         if (event.getId() == events[Events::TIMER_EXPIRED])
@@ -213,6 +243,34 @@ namespace SmartHomeDevice_n
     {
         if (msg.isValid() && connectedToServer())
             sendData(msg.rawText());
+    }
+
+    void SmartHomeDevice::addParam(const DeviceParameter &deviceParam)
+    {
+        if (std::find_if(paramsList.begin(), paramsList.end(), [&deviceParam](const auto &param) -> bool {return deviceParam.getName() == param.getName(); }) == paramsList.end())
+            paramsList.push_back(deviceParam);
+
+        // TODO: convert parameter to json and send it to the server
+    }
+
+    void SmartHomeDevice::setParamValue(const std::string &paramName, const std::string &paramValue)
+    {
+        auto param = std::find_if(paramsList.begin(), paramsList.end(), [&paramName](const auto &param) -> bool {return paramName == param.getName(); });
+
+        if (param != paramsList.end())
+            param->setCurrentValue(paramValue);
+
+        // TODO: convert parameter to json and send it to the server
+    }
+
+    const std::string &SmartHomeDevice::getParamValue(const std::string &paramName)
+    {
+        auto param = std::find_if(paramsList.begin(), paramsList.end(), [&paramName](const auto &param) -> bool {return paramName == param.getName(); });
+
+        if (param != paramsList.end())
+            return param->getCurrentValue();
+        else
+            return std::string("");
     }
 
     // FSM callbacks
@@ -383,7 +441,10 @@ namespace SmartHomeDevice_n
             connectToServer(eventData.data.hostInfo.host, eventData.data.hostInfo.port);
 
             if (connectedToServer())
+            {
+                connectedHost = eventData.data.hostInfo.host + ':' + std::to_string(eventData.data.hostInfo.port);
                 eventSystem.sendEvent(Event(events[Events::SERVER_CONNECTED]));
+            }
             else
             {
                 serverConnectionRetries++;
@@ -420,6 +481,38 @@ namespace SmartHomeDevice_n
 
         // reset the device
         reset();
+    }
+
+    void SmartHomeDevice::fsm_handleConnectionToServer(const EventData &eventData)
+    {
+        fsm_goIdle(eventData);
+
+        auto deviceStatusJson = std::string(""); // TODO: fill up json fields using rapidjson
+
+        HttpMessage deviceStatusMsg;
+        
+        deviceStatusMsg.setRequestLine(HttpMethod::PUT, "deviceStatus", HttpVersion::HTTP_1_1)
+        .appendHeader(HttpHeader::HOST, connectedHost)
+        .appendHeader(HttpHeader::ACCEPT, "application/json")
+        .appendHeader(HttpHeader::CONTENT_TYPE, "application/json")
+        .appendHeader(HttpHeader::CONTENT_LENGTH, std::to_string(deviceStatusJson.length()))
+        .appendBody(deviceStatusJson);
+
+        sendHttpMessage(deviceStatusMsg);
+
+        timerManager->startTimer(deviceStatusRequestTimer);
+    }
+
+    void SmartHomeDevice::fsm_requestDeviceStatus(const EventData &eventData)
+    {
+        HttpMessage deviceRequestMsg;
+
+        deviceRequestMsg.setRequestLine(HttpMethod::GET, "deviceStatus?id="+std::to_string(deviceId), HttpVersion::HTTP_1_1)
+        .appendHeader(HttpHeader::HOST, connectedHost);
+
+        sendHttpMessage(deviceRequestMsg);
+
+        timerManager->restartTimer(deviceStatusRequestTimer);
     }
 
     void SmartHomeDevice::fsm_goIdle(const EventData &eventData)

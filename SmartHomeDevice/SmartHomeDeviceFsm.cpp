@@ -36,6 +36,7 @@ namespace SmartHomeDevice_n
             case Events::SERVER_CONNECTION_FAILED:              return "SERVER_CONNECTION_FAILED";
             case Events::SERVER_CONNECTION_RETRIES_EXHAUSTED:   return "SERVER_CONNECTION_RETRIES_EXHAUSTED";
             case Events::SERVER_CONNECTION_TIMEOUT:             return "SERVER_CONNECTION_TIMEOUT";
+            case Events::DEVICE_STATUS_REQUEST_TIMEOUT:         return "DEVICE_STATUS_REQUEST_TIMEOUT";
             case Events::DATA_AVAILABLE:                        return "DATA_AVAILABLE";
             case Events::DISCONNECTED:                          return "DISCONNECTED";
             case Events::TIMER_EXPIRED:                         return "TIMER_EXPIRED";

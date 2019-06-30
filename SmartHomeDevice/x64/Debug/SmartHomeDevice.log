@@ -1,2 +1,16 @@
-﻿  DebugDevice.cpp
+﻿  DeviceParameter.cpp
+  SmartHomeDevice.cpp
+  SmartHomeDeviceFsm.cpp
+e:\programs\smarthomedevice\smarthomedevice\common_library\statemachine\statemachine.hpp(62): warning C4101: e: неиспользованная локальная переменная
+  e:\programs\smarthomedevice\smarthomedevice\common_library\statemachine\statemachine.hpp(47): note: при компиляции функции-члена "<Нет данных>" класса класс <Нет данных>
+  e:\programs\smarthomedevice\smarthomedevice\smarthomedevicefsm.cpp(57): note: выполняется компиляция ссылки на экземпляр шаблон функции "void FSM::StateMachine<SmartHomeDevice_n::State::Values,EventSystem_n::EventId,SmartHomeDevice_n::EventData,DebugDevice_n::DebugDevice>::execute(const EventType &,const EventDataType &,DebugIODeviceType *)"
+          with
+          [
+              EventType=EventSystem_n::EventId,
+              EventDataType=SmartHomeDevice_n::EventData,
+              DebugIODeviceType=DebugDevice_n::DebugDevice
+          ]
+  e:\programs\smarthomedevice\smarthomedevice\smarthomedevicefsm.h(85): note: выполняется компиляция ссылки на экземпляр шаблон класс "FSM::StateMachine<SmartHomeDevice_n::State::Values,EventSystem_n::EventId,SmartHomeDevice_n::EventData,DebugDevice_n::DebugDevice>"
+  Создание кода...
+e:\programs\smarthomedevice\smarthomedevice\smarthomedevice.cpp(273): warning C4172: возвращение адреса локальной или временной переменной
   SmartHomeDevice.vcxproj -> E:\Programs\SmartHomeDevice\x64\Debug\SmartHomeDevice.exe

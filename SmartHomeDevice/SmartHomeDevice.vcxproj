@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)\rapidjson;$(ProjectDir)\Common_Library\CrossPlatformSyncTimer;$(ProjectDir)\Common_Library\TaskManager;$(ProjectDir)\Common_Library\XmlReader;$(ProjectDir)\Common_Library\StateMachine;$(ProjectDir)\Common_Library\HttpMessage;$(ProjectDir)\Common_Library\EventSystem;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\rapidjson\include\rapidjson;$(ProjectDir)\Common_Library\CrossPlatformSyncTimer;$(ProjectDir)\Common_Library\TaskManager;$(ProjectDir)\Common_Library\XmlReader;$(ProjectDir)\Common_Library\StateMachine;$(ProjectDir)\Common_Library\HttpMessage;$(ProjectDir)\Common_Library\EventSystem;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -126,6 +126,7 @@
     <ClCompile Include="Common_Library\TaskManager\Task.cpp" />
     <ClCompile Include="Common_Library\TaskManager\TaskManager.cpp" />
     <ClCompile Include="DebugDevice.cpp" />
+    <ClCompile Include="DeviceParameter.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="SmartHomeDevice.cpp" />
     <ClCompile Include="SmartHomeDeviceFsm.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Common_Library\TaskManager\Task.h" />
     <ClInclude Include="Common_Library\TaskManager\TaskManager.h" />
     <ClInclude Include="DebugDevice.h" />
+    <ClInclude Include="DeviceParameter.h" />
     <ClInclude Include="SmartHomeDevice.h" />
     <ClInclude Include="SmartHomeDeviceFsm.h" />
   </ItemGroup>

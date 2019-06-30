@@ -46,6 +46,7 @@ namespace SmartHomeDevice_n
             SERVER_CONNECTION_FAILED,
             SERVER_CONNECTION_RETRIES_EXHAUSTED,
             SERVER_CONNECTION_TIMEOUT,
+            DEVICE_STATUS_REQUEST_TIMEOUT,
             DATA_AVAILABLE,
             DISCONNECTED,
             TIMER_EXPIRED,

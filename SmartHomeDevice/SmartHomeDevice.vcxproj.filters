@@ -12,6 +12,7 @@
     <ClCompile Include="Common_Library\CrossPlatformSyncTimer\Timer.cpp" />
     <ClCompile Include="Common_Library\CrossPlatformSyncTimer\TimerManager.cpp" />
     <ClCompile Include="DebugDevice.cpp" />
+    <ClCompile Include="DeviceParameter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SmartHomeDevice.h" />
@@ -26,5 +27,6 @@
     <ClInclude Include="Common_Library\CrossPlatformSyncTimer\Timer.h" />
     <ClInclude Include="Common_Library\CrossPlatformSyncTimer\TimerManager.h" />
     <ClInclude Include="DebugDevice.h" />
+    <ClInclude Include="DeviceParameter.h" />
   </ItemGroup>
 </Project>

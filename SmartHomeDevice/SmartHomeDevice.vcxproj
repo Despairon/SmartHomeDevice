@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)\rapidjson\include\rapidjson;$(ProjectDir)\Common_Library\CrossPlatformSyncTimer;$(ProjectDir)\Common_Library\TaskManager;$(ProjectDir)\Common_Library\XmlReader;$(ProjectDir)\Common_Library\StateMachine;$(ProjectDir)\Common_Library\HttpMessage;$(ProjectDir)\Common_Library\EventSystem;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\rapidjson\include;$(ProjectDir)\Common_Library\CrossPlatformSyncTimer;$(ProjectDir)\Common_Library\TaskManager;$(ProjectDir)\Common_Library\XmlReader;$(ProjectDir)\Common_Library\StateMachine;$(ProjectDir)\Common_Library\HttpMessage;$(ProjectDir)\Common_Library\EventSystem;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

@@ -28,6 +28,7 @@ namespace SmartHomeDevice_n
         bool                  readOnly;
 
     public:
+        DeviceParameter() = default;
         DeviceParameter(const std::string&, const DeviceParamType&, const bool&, const std::string& = std::string(""), const DeviceParamValuesList& = DeviceParamValuesList());
 
         const std::string &getName() const;
@@ -41,5 +42,11 @@ namespace SmartHomeDevice_n
         void setType(const DeviceParamType&);
         void setCurrentValue(const std::string&);
         void setReadOnly(const bool&);
+
+        static std::string typeToStr(const DeviceParamType&);
+        static DeviceParamType strToType(const std::string&);
+
+        std::string toJson() const;
+        static DeviceParameter fromJson(const std::string&);
     };
 }

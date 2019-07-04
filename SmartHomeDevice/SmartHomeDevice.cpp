@@ -1,5 +1,4 @@
 #include "SmartHomeDevice.h"
-#include "rapidjson.h"
 
 namespace SmartHomeDevice_n
 {
@@ -248,9 +247,13 @@ namespace SmartHomeDevice_n
     void SmartHomeDevice::addParam(const DeviceParameter &deviceParam)
     {
         if (std::find_if(paramsList.begin(), paramsList.end(), [&deviceParam](const auto &param) -> bool {return deviceParam.getName() == param.getName(); }) == paramsList.end())
+        {
             paramsList.push_back(deviceParam);
 
-        // TODO: convert parameter to json and send it to the server
+            auto paramJson = deviceParam.toJson();
+
+            // TODO: send "parameter added" notification to the server
+        }
     }
 
     void SmartHomeDevice::setParamValue(const std::string &paramName, const std::string &paramValue)
@@ -258,9 +261,13 @@ namespace SmartHomeDevice_n
         auto param = std::find_if(paramsList.begin(), paramsList.end(), [&paramName](const auto &param) -> bool {return paramName == param.getName(); });
 
         if (param != paramsList.end())
+        {
             param->setCurrentValue(paramValue);
 
-        // TODO: convert parameter to json and send it to the server
+            auto paramJson = param->toJson();
+
+            // TODO: send "parameter value changed" notification to the server
+        }
     }
 
     const std::string &SmartHomeDevice::getParamValue(const std::string &paramName)

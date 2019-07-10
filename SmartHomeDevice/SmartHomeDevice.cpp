@@ -1,11 +1,15 @@
 #include "SmartHomeDevice.h"
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
 
 namespace SmartHomeDevice_n
 {
     #define FSM_CALLBACK_CLOSURE(func) [this](const EventData &eventData) { this->func(eventData); }
 
     SmartHomeDevice::SmartHomeDevice(const std::string &deviceName, const WifiConfiguration &configuration)
-    : deviceName(deviceName),
+    : deviceId(-1),
+      deviceName(deviceName),
       stateMachine(State::INITIAL),
       configuration(configuration),
       timerManager(nullptr),
@@ -244,40 +248,120 @@ namespace SmartHomeDevice_n
             sendData(msg.rawText());
     }
 
-    void SmartHomeDevice::addParam(const DeviceParameter &deviceParam)
+    bool SmartHomeDevice::addParam(const DeviceParameter &deviceParam)
     {
-        if (std::find_if(paramsList.begin(), paramsList.end(), [&deviceParam](const auto &param) -> bool {return deviceParam.getName() == param.getName(); }) == paramsList.end())
+        if (deviceId != -1)
         {
-            paramsList.push_back(deviceParam);
+            if (std::find_if(paramsList.begin(), paramsList.end(), [&deviceParam](const auto &param) -> bool {return deviceParam.getName() == param.getName(); }) == paramsList.end())
+            {
+                paramsList.push_back(deviceParam);
 
-            auto paramJson = deviceParam.toJson();
+                auto paramJson = deviceParam.toJson();
 
-            // TODO: send "parameter added" notification to the server
+                rapidjson::Document jsonDoc;
+
+                jsonDoc.SetObject();
+
+                rapidjson::Document::AllocatorType& allocator = jsonDoc.GetAllocator();
+
+                rapidjson::Value paramValue;
+                paramValue.SetString(paramJson.c_str(), paramJson.length(), allocator);
+
+                jsonDoc.AddMember("eventName", "deviceParameterAdded", allocator);
+                jsonDoc.AddMember("parameter", paramValue, allocator);
+
+                rapidjson::StringBuffer buffer;
+
+                buffer.Clear();
+
+                rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+                jsonDoc.Accept(writer);
+
+                auto deviceStatusJson = std::string(buffer.GetString());
+
+                HttpMessage deviceStatusMsg;
+
+                deviceStatusMsg.setRequestLine(HttpMethod::POST, "deviceStatus?id=" + std::to_string(deviceId), HttpVersion::HTTP_1_1)
+                    .appendHeader(HttpHeader::HOST, connectedHost)
+                    .appendHeader(HttpHeader::ACCEPT, "application/json")
+                    .appendHeader(HttpHeader::CONTENT_TYPE, "application/json")
+                    .appendHeader(HttpHeader::CONTENT_LENGTH, std::to_string(deviceStatusJson.length()))
+                    .appendBody(deviceStatusJson);
+
+                sendHttpMessage(deviceStatusMsg);
+
+                return true;
+            }
+            else
+                return false;
         }
+        else
+            return false;
     }
 
-    void SmartHomeDevice::setParamValue(const std::string &paramName, const std::string &paramValue)
+    bool SmartHomeDevice::setParamValue(const std::string &paramName, const std::string &paramValue)
     {
-        auto param = std::find_if(paramsList.begin(), paramsList.end(), [&paramName](const auto &param) -> bool {return paramName == param.getName(); });
-
-        if (param != paramsList.end())
+        if (deviceId != -1)
         {
-            param->setCurrentValue(paramValue);
+            auto param = std::find_if(paramsList.begin(), paramsList.end(), [&paramName](const auto &param) -> bool {return paramName == param.getName(); });
 
-            auto paramJson = param->toJson();
+            if (param != paramsList.end())
+            {
+                param->setCurrentValue(paramValue);
 
-            // TODO: send "parameter value changed" notification to the server
+                auto paramJson = param->toJson();
+
+                rapidjson::Document jsonDoc;
+
+                jsonDoc.SetObject();
+
+                rapidjson::Document::AllocatorType& allocator = jsonDoc.GetAllocator();
+
+                rapidjson::Value paramValue;
+                paramValue.SetString(paramJson.c_str(), paramJson.length(), allocator);
+
+                jsonDoc.AddMember("eventName", "deviceParameterChanged", allocator);
+                jsonDoc.AddMember("parameter", paramValue, allocator);
+
+                rapidjson::StringBuffer buffer;
+
+                buffer.Clear();
+
+                rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+                jsonDoc.Accept(writer);
+
+                auto deviceStatusJson = std::string(buffer.GetString());
+
+                HttpMessage deviceStatusMsg;
+
+                deviceStatusMsg.setRequestLine(HttpMethod::POST, "deviceStatus?id=" + std::to_string(deviceId), HttpVersion::HTTP_1_1)
+                    .appendHeader(HttpHeader::HOST, connectedHost)
+                    .appendHeader(HttpHeader::ACCEPT, "application/json")
+                    .appendHeader(HttpHeader::CONTENT_TYPE, "application/json")
+                    .appendHeader(HttpHeader::CONTENT_LENGTH, std::to_string(deviceStatusJson.length()))
+                    .appendBody(deviceStatusJson);
+
+                sendHttpMessage(deviceStatusMsg);
+
+                return true;
+            }
+            else
+                return false;
         }
+        else
+            return false;
     }
 
     const std::string &SmartHomeDevice::getParamValue(const std::string &paramName)
     {
+        static const std::string dummy;
+
         auto param = std::find_if(paramsList.begin(), paramsList.end(), [&paramName](const auto &param) -> bool {return paramName == param.getName(); });
 
         if (param != paramsList.end())
             return param->getCurrentValue();
         else
-            return std::string("");
+            return dummy;
     }
 
     // FSM callbacks
@@ -494,7 +578,37 @@ namespace SmartHomeDevice_n
     {
         fsm_goIdle(eventData);
 
-        auto deviceStatusJson = std::string(""); // TODO: fill up json fields using rapidjson
+        rapidjson::Document jsonDoc;
+
+        jsonDoc.SetObject();
+
+        rapidjson::Document::AllocatorType& allocator = jsonDoc.GetAllocator();
+
+        rapidjson::Value parametersValue;
+        parametersValue.SetArray();
+
+        for (auto param : paramsList)
+        {
+            rapidjson::Value val;
+
+            auto paramJson = param.toJson();
+
+            val.SetString(paramJson.c_str(), paramJson.length(), allocator);
+
+            parametersValue.PushBack(val, allocator);
+        }
+
+        jsonDoc.AddMember("eventName", "deviceOnline", allocator);
+        jsonDoc.AddMember("parameters", parametersValue, allocator);
+
+        rapidjson::StringBuffer buffer;
+
+        buffer.Clear();
+
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+        jsonDoc.Accept(writer);
+
+        auto deviceStatusJson = std::string(buffer.GetString());
 
         HttpMessage deviceStatusMsg;
         
@@ -512,12 +626,15 @@ namespace SmartHomeDevice_n
 
     void SmartHomeDevice::fsm_requestDeviceStatus(const EventData &eventData)
     {
-        HttpMessage deviceRequestMsg;
+        if (deviceId != -1)
+        {
+            HttpMessage deviceRequestMsg;
 
-        deviceRequestMsg.setRequestLine(HttpMethod::GET, "deviceStatus?id="+std::to_string(deviceId), HttpVersion::HTTP_1_1)
-        .appendHeader(HttpHeader::HOST, connectedHost);
+            deviceRequestMsg.setRequestLine(HttpMethod::GET, "deviceStatus?id=" + std::to_string(deviceId), HttpVersion::HTTP_1_1)
+                .appendHeader(HttpHeader::HOST, connectedHost);
 
-        sendHttpMessage(deviceRequestMsg);
+            sendHttpMessage(deviceRequestMsg);
+        }
 
         timerManager->restartTimer(deviceStatusRequestTimer);
     }

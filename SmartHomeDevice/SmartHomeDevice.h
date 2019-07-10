@@ -115,8 +115,8 @@ namespace SmartHomeDevice_n
 
         void sendHttpMessage(const HttpMessage&);
 
-        void addParam(const DeviceParameter&);
-        void setParamValue(const std::string&, const std::string&);
+        bool addParam(const DeviceParameter&);
+        bool setParamValue(const std::string&, const std::string&);
         const std::string &getParamValue(const std::string&);
     public:
         SmartHomeDevice(const std::string&, const WifiConfiguration&);

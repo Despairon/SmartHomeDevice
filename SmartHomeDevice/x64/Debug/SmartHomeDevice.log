@@ -1,2 +1,5 @@
-﻿  Main.cpp
+﻿  SmartHomeDevice.cpp
+e:\programs\smarthomedevice\smarthomedevice\smarthomedevice.cpp(268): warning C4267: аргумент: преобразование из "size_t" в "rapidjson::SizeType"; возможна потеря данных
+e:\programs\smarthomedevice\smarthomedevice\smarthomedevice.cpp(321): warning C4267: аргумент: преобразование из "size_t" в "rapidjson::SizeType"; возможна потеря данных
+e:\programs\smarthomedevice\smarthomedevice\smarthomedevice.cpp(596): warning C4267: аргумент: преобразование из "size_t" в "rapidjson::SizeType"; возможна потеря данных
   SmartHomeDevice.vcxproj -> E:\Programs\SmartHomeDevice\x64\Debug\SmartHomeDevice.exe

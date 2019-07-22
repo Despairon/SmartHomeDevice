@@ -9,6 +9,7 @@ namespace SmartHomeDevice_n
     #define MAX_SSID_LENGTH 64
     #define MAX_ERROR_LENGTH 128
     #define MAX_HOSTNAME_LENGTH 64
+    #define MAX_SERVER_RESPONSE_LEN 256
     
     using namespace FSM;
     using namespace EventSystem_n;
@@ -48,6 +49,8 @@ namespace SmartHomeDevice_n
             SERVER_CONNECTION_TIMEOUT,
             DEVICE_STATUS_REQUEST_TIMEOUT,
             DATA_AVAILABLE,
+            DEVICE_ID_RECEIVED,
+            DEVICE_ID_ERROR,
             DISCONNECTED,
             TIMER_EXPIRED,
             FATAL_ERROR
@@ -75,10 +78,10 @@ namespace SmartHomeDevice_n
         union
         {
             NetworkInfo networkInfo;
-            
             HostInfo hostInfo;
-
             char errorStr[MAX_ERROR_LENGTH];
+            char serverResponseStr[MAX_SERVER_RESPONSE_LEN];
+
         } data;
     };
 

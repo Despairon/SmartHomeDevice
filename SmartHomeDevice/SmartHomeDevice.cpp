@@ -88,6 +88,8 @@ namespace SmartHomeDevice_n
         events[Events::SERVER_CONNECTION_TIMEOUT]           = eventSystem.createEvent();
         events[Events::DEVICE_STATUS_REQUEST_TIMEOUT]       = eventSystem.createEvent();
         events[Events::DATA_AVAILABLE]                      = eventSystem.createEvent();
+        events[Events::DEVICE_ID_RECEIVED]                  = eventSystem.createEvent();
+        events[Events::DEVICE_ID_ERROR]                     = eventSystem.createEvent();
         events[Events::DISCONNECTED]                        = eventSystem.createEvent();
         events[Events::TIMER_EXPIRED]                       = eventSystem.createEvent();
         events[Events::FATAL_ERROR]                         = eventSystem.createEvent();
@@ -107,6 +109,8 @@ namespace SmartHomeDevice_n
         eventSystem.subscribe(events[Events::SERVER_CONNECTION_TIMEOUT],     &stateMachine);
         eventSystem.subscribe(events[Events::DEVICE_STATUS_REQUEST_TIMEOUT], &stateMachine);
         eventSystem.subscribe(events[Events::DATA_AVAILABLE],                &stateMachine);
+        eventSystem.subscribe(events[Events::DEVICE_ID_RECEIVED],            &stateMachine);
+        eventSystem.subscribe(events[Events::DEVICE_ID_ERROR],               &stateMachine);
         eventSystem.subscribe(events[Events::DISCONNECTED],                  &stateMachine);
         eventSystem.subscribe(events[Events::FATAL_ERROR],                   &stateMachine);
 
@@ -147,6 +151,8 @@ namespace SmartHomeDevice_n
 
         stateMachine.addTransition(State::CONNECTED,            events[Events::DEVICE_STATUS_REQUEST_TIMEOUT],       State::CONNECTED,            FSM_CALLBACK_CLOSURE(fsm_requestDeviceStatus));
         stateMachine.addTransition(State::CONNECTED,            events[Events::DATA_AVAILABLE],                      State::CONNECTED,            FSM_CALLBACK_CLOSURE(fsm_readData));
+        stateMachine.addTransition(State::CONNECTED,            events[Events::DEVICE_ID_RECEIVED],                  State::CONNECTED,            FSM_CALLBACK_CLOSURE(fsm_saveDeviceId));
+        stateMachine.addTransition(State::CONNECTED,            events[Events::DEVICE_ID_ERROR],                     State::CONNECTED,            FSM_CALLBACK_CLOSURE(fsm_handleDeviceIdError));
         stateMachine.addTransition(State::CONNECTED,            events[Events::DISCONNECTED],                        State::NETWORK_SCANNING,     FSM_CALLBACK_CLOSURE(fsm_startNetworksScan));
         stateMachine.addTransition(State::CONNECTED,            events[Events::FATAL_ERROR],                         State::INITIAL,              FSM_CALLBACK_CLOSURE(fsm_handleFatalError));
     }
@@ -559,7 +565,7 @@ namespace SmartHomeDevice_n
     {
         auto error = eventData.data.errorStr;
         
-        *debugDevice << "Fatal error: " << error;
+        *debugDevice << "Fatal error: " << error << "\n";
 
         // add some delay so the debug message can get to serial port
         for (int i = 0; i < 10000; i++);
@@ -657,8 +663,82 @@ namespace SmartHomeDevice_n
 
             if (httpMessage.isValid())
             {
-                // TODO: check received data here and send appropriate event...
+                const auto &status = httpMessage.status();
+                const auto &body   = httpMessage.body();
+
+                if (!body.empty())
+                {
+                    rapidjson::Document doc;
+
+                    doc.Parse(body.c_str());
+
+                    if (!doc.IsNull() && !doc.HasParseError())
+                    {
+                        const std::map<std::string, Events::Values> jsonOkResponseEventsMap =
+                        {
+                            {"deviceOnlineResponse", Events::DEVICE_ID_RECEIVED}
+                        };
+
+                        const std::map<std::string, Events::Values> jsonFailResponseEventsMap =
+                        {
+                            {"deviceOnlineResponse", Events::DEVICE_ID_ERROR}
+                        };
+
+                        EventData evData;
+                        memset(&evData, 0, sizeof(evData));
+
+                        evData.sender = eventData.sender;
+
+                        auto responseData = doc["responseData"].GetString();
+
+                        memcpy(evData.data.serverResponseStr, responseData, strlen(responseData));
+
+                        std::string responseEvent = doc["eventName"].GetString();
+
+                        if ((status >= HttpStatus::_200_OK) && (status <= HttpStatus::_226_IM_USED))
+                        {
+                            if (jsonOkResponseEventsMap.find(responseEvent) != jsonOkResponseEventsMap.end())
+                                eventSystem.sendEvent(Event(events[jsonOkResponseEventsMap.at(responseEvent)], &evData, sizeof(evData)));
+                        }
+                        else if ((status >= HttpStatus::_400_BAD_REQUEST) && (status <= HttpStatus::_451_UNAVAILABLE_FOR_LEGAL_REASONS))
+                        {
+                            if (jsonFailResponseEventsMap.find(responseEvent) != jsonFailResponseEventsMap.end())
+                                eventSystem.sendEvent(Event(events[jsonFailResponseEventsMap.at(responseEvent)], &evData, sizeof(evData)));
+                        }
+                    }
+                }
+                else
+                {
+                    if ((status >= HttpStatus::_500_INTERNAL_SERVER_ERROR) && (status <= HttpStatus::_511_NETWORK_AUTHENTICATION_REQUIRED))
+                    {
+                        // 5xx codes mean that some issues are on server side. We'll treat this as disconnection, and try to establish a new one, starting from scratch
+
+                        eventSystem.sendEvent(Event(events[Events::DISCONNECTED]));
+                    }
+                    else
+                    {
+                        *debugDevice << "Unhandled http status received: " << HttpMessage::getHttpStatusStr(status) << "\n";
+                    }
+                }
             }
         }
+    }
+
+    void SmartHomeDevice::fsm_saveDeviceId(const EventData &eventData)
+    {
+        rapidjson::Document doc;
+
+        doc.Parse(eventData.data.serverResponseStr);
+
+        if (!doc.IsNull() && !doc.HasParseError())
+            deviceId = doc["deviceId"].GetInt();
+        else
+            eventSystem.sendEvent(Event(events[Events::FATAL_ERROR]));
+    }
+
+    void SmartHomeDevice::fsm_handleDeviceIdError(const EventData &eventData)
+    {
+        // try to reconnect. Then we will try to get device ID once more
+        eventSystem.sendEvent(Event(events[Events::DISCONNECTED]));
     }
 }

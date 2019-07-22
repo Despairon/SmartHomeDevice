@@ -93,6 +93,8 @@ namespace SmartHomeDevice_n
         void fsm_requestDeviceStatus(const EventData&);
         void fsm_goIdle(const EventData&);
         void fsm_readData(const EventData&);
+        void fsm_saveDeviceId(const EventData&);
+        void fsm_handleDeviceIdError(const EventData&);
 
         SmartHomeDevice() = delete;
 

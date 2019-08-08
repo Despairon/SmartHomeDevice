@@ -128,6 +128,8 @@ namespace SmartHomeDevice_n
         void go() override;
         void terminate() override;
 
+		void run(); // use this method in a loop for the system to be in working state.
+
         void onEvent(EventSystem*, const Event&) override;
     };
 }

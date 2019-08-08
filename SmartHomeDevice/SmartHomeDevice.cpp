@@ -227,6 +227,11 @@ namespace SmartHomeDevice_n
         disconnectFromWiFi();
     }
 
+	void SmartHomeDevice::run()
+	{
+		taskManager.go();
+	}
+
     void SmartHomeDevice::onEvent(EventSystem *sender, const Event &event)
     {
         auto tmrToEventsMap = std::map<TimerHandle, EventId>

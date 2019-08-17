@@ -122,7 +122,7 @@ namespace SmartHomeDevice_n
         const std::string &getParamValue(const std::string&);
     public:
         SmartHomeDevice(const std::string&, const WifiConfiguration&);
-       ~SmartHomeDevice();
+        virtual ~SmartHomeDevice();
 
         void init() override;
         void go() override;

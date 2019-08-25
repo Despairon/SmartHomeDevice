@@ -100,6 +100,7 @@ namespace SmartHomeDevice_n
 
     protected:
         // WiFi interface
+        virtual std::string         getMacAddress() = 0;
         virtual void                connectToWiFi(const std::string &ssid, const std::string &password) = 0;
         virtual void                disconnectFromWiFi() = 0;
         virtual void                scanForNetworks(std::function<void(int)> scanCallback) = 0;
@@ -128,7 +129,7 @@ namespace SmartHomeDevice_n
         void go() override;
         void terminate() override;
 
-		void run(); // use this method in a loop for the system to be in working state.
+        void run(); // use this method in a loop for the system to be in working state.
 
         void onEvent(EventSystem*, const Event&) override;
     };

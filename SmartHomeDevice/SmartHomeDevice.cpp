@@ -52,20 +52,18 @@ namespace SmartHomeDevice_n
     {
         // default mandatory params set
 
-        auto deviceIdParam     = DeviceParameter("Device_ID",     DeviceParamType::TEXTBOX, true);
-        auto deviceNameParam   = DeviceParameter("Device_Name",   DeviceParamType::TEXTBOX, true);
-        auto deviceStatusParam = DeviceParameter("Device_Status", DeviceParamType::TEXTBOX, true);
+        auto deviceIdParam     = DeviceParameter("Device_ID",          DeviceParamType::TEXTBOX, true);
+        auto deviceMacAddress  = DeviceParameter("Device_MAC_Address", DeviceParamType::TEXTBOX, true);
+        auto deviceNameParam   = DeviceParameter("Device_Name",        DeviceParamType::TEXTBOX, true);
+        auto deviceStatusParam = DeviceParameter("Device_Status",      DeviceParamType::TEXTBOX, true);
 
         deviceIdParam.addValue("-1"); 
-        deviceIdParam.setCurrentValue("-1");
-
+        deviceMacAddress.addValue(getMacAddress());
         deviceNameParam.addValue(deviceName.empty() ? "SmartHomeDevice" : deviceName);
-        deviceNameParam.setCurrentValue(deviceName.empty() ? "SmartHomeDevice" : deviceName);
-
         deviceStatusParam.addValue("Online");
-        deviceStatusParam.setCurrentValue("Online");
 
         paramsList.push_back(deviceIdParam);
+        paramsList.push_back(deviceMacAddress);
         paramsList.push_back(deviceNameParam);
         paramsList.push_back(deviceStatusParam);
     }
@@ -227,10 +225,10 @@ namespace SmartHomeDevice_n
         disconnectFromWiFi();
     }
 
-	void SmartHomeDevice::run()
-	{
-		taskManager.go();
-	}
+    void SmartHomeDevice::run()
+    {
+        taskManager.go();
+    }
 
     void SmartHomeDevice::onEvent(EventSystem *sender, const Event &event)
     {
